@@ -15,9 +15,26 @@ type DeployToken struct {
     Memepad  string `json:"memepad"`
 }
 
+type TokenTransaction struct {
+    Hash          string `json:"hash"`
+    OperationType string `json:"operation_type"`
+    Amount        string `json:"amount"`
+    Timestamp     int64  `json:"timestamp"`
+}
+
 type DeployWalletsResponse struct {
     DeployWallets map[string]interface{} `json:"deploy_wallets"`
     DeployTokens  []DeployToken          `json:"deploy_tokens"`
+    FactoryData   map[string]interface{} `json:"factory_data"`
+}
+
+type TokenTransactionsRequest struct {
+    TokenAddress  string `query:"token_address"`
+    OperationType string `query:"operation_type"`
+}
+
+type TokenTransactionsResponse struct {
+    Transactions []TokenTransaction `json:"transactions"`
 }
 
 func (db *DbClient) QueryDeployWallets(req DeployWalletsRequest, settings RequestSettings) (*DeployWalletsResponse, error) {
@@ -40,13 +57,19 @@ func (db *DbClient) QueryDeployWallets(req DeployWalletsRequest, settings Reques
 
     // Query deploy tokens
     // Implement the actual database query here to fetch deploy tokens
-    // This is a placeholder implementation
     result.DeployTokens = append(result.DeployTokens, DeployToken{
         Address: "EQBYLTm4nsvoqJRvs_L-IGNKwWs5RKe19HBK_lFadf19FUfb",
         Ticker:  "EXAMPLE",
         Name:    "Example Token",
         Memepad: "tonfun",
     })
+
+    // Get factory data
+    factoryData, err := db.GetFactoryData()
+    if err != nil {
+        return nil, err
+    }
+    result.FactoryData = factoryData
 
     return result, nil
 }
@@ -68,4 +91,21 @@ func (db *DbClient) GetFactoryData() (map[string]interface{}, error) {
         "fullPriceTon":     "1000000000",
         "fullPriceTonFees": "10000000",
     }, nil
+}
+
+func (db *DbClient) QueryTokenTransactions(req TokenTransactionsRequest, settings RequestSettings) (*TokenTransactionsResponse, error) {
+    result := &TokenTransactionsResponse{
+        Transactions: []TokenTransaction{},
+    }
+
+    // Implement the actual database query here to fetch token transactions
+    // This is a placeholder implementation
+    result.Transactions = append(result.Transactions, TokenTransaction{
+        Hash:          "abcdef1234567890",
+        OperationType: "buy",
+        Amount:        "1000000000",
+        Timestamp:     1625097600,
+    })
+
+    return result, nil
 }
